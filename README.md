@@ -55,27 +55,24 @@ Copy the example `.env.json` file and update the values:
 cp .env.example.json .env.json
 ```
 
-### 3. Run Locally (Without Docker)
-1. Install dependencies:
-   ```bash
-   go mod tidy
-   ```
-2. Initialize the database (ensure PostgreSQL is running):
-   ```bash
-   psql -U postgres -d clinic_db -f scripts/init.sql
-   ```
-3. Run the application:
-   ```bash
-   go run cmd/app/main.go
-   ```
-
-### 5. Running Migration (Optional)
-  1. Make sure you have PostgreSQL running.
+### 3. Running Migration
+  1. Make sure you have PostgreSQL running and create a database named `clinic-portal-makerble-golang-test` with public schema.
   2. Make sure you already installed `sql-migrate` by running `go install github.com/rubenv/sql-migrate@latest`.
   3. Run the following command to run migration:
      ```bash
      sql-migrate up -config=dbconfig.yml -env=development
      ```
+
+### 4. Run Locally (Without Docker)
+  1. Install dependencies:
+    ```bash
+    go mod tidy
+    ```
+  2. Run the application:
+    ```bash
+    go run .
+    ```
+
 
 ## API Endpoints
 Below are key endpoints. Full documentation is available via Swagger at `/swagger/index.html`.
