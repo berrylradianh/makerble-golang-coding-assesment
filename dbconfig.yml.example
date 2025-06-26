@@ -1,0 +1,17 @@
+development:
+  dialect: postgres
+  datasource: dbusername:pass@tcp(127.0.0.1:5432)/clinic-portal-makerble-golang-test?parseTime=true
+  dir: library/migration
+  table: migrations
+
+stage:
+  dialect: postgres
+  datasource: dbusername:pass@tcp(127.0.0.1:5432)/clinic-portal-makerble-golang-test?parseTime=true
+  dir: library/migration
+  table: migrations
+
+prod:
+  dialect: postgres
+  datasource: dbusername:pass@tcp(127.0.0.1:5432)/clinic-portal-makerble-golang-test?parseTime=true
+  dir: library/migration
+  table: migrations
