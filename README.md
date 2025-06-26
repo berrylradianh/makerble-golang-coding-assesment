@@ -65,13 +65,13 @@ cp .env.example.json .env.json
 
 ### 4. Run Locally (Without Docker)
   1. Install dependencies:
-    ```bash
-    go mod tidy
-    ```
+      ```bash
+      go mod tidy
+      ```
   2. Run the application:
-    ```bash
-    go run .
-    ```
+      ```bash
+      go run .
+      ```
 
 
 ## API Endpoints
