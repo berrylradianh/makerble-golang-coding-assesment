@@ -59,22 +59,16 @@ const (
 
 func NewMiddlewareConfig(conf config.Config) error {
 
-	supervisor := strings.Split(conf.GetString("permission.supervisor"), ",")
-	finance := strings.Split(conf.GetString("permission.finance"), ",")
-	mentor := strings.Split(conf.GetString("permission.mentor"), ",")
-	creator := strings.Split(conf.GetString("permission.creator"), ",")
-	guest := strings.Split(conf.GetString("permission.guest"), ",")
-	all := strings.Split(conf.GetString("permission.all"), ",")
+	admin := strings.Split(conf.GetString("permission.admin"), ",")
+	receptionist := strings.Split(conf.GetString("permission.receptionist"), ",")
+	doctor := strings.Split(conf.GetString("permission.doctor"), ",")
 
 	signature := conf.GetString("app.signature")
 
 	role := make(map[string][]string)
-	role["supervisor"] = supervisor
-	role["finance"] = finance
-	role["mentor"] = mentor
-	role["creator"] = creator
-	role["guest"] = guest
-	role["all"] = all
+	role["admin"] = admin
+	role["receptionist"] = receptionist
+	role["doctor"] = doctor
 
 	InitRole(role)
 	InitJWTMiddlewareCustom([]byte(signature), jwt.SigningMethodHS512)
