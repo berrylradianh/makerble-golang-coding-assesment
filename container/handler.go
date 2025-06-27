@@ -8,14 +8,18 @@
 package container
 
 import (
+	"github.com/berrylradianh/makerble-golang-coding-assesment/app/handler/auth"
 	"github.com/berrylradianh/makerble-golang-coding-assesment/library/config"
 	"gorm.io/gorm"
 )
 
 type HandlerContainer struct {
+	Auth auth.Handler
 }
 
 // NewHandlerContainer{ initial value dependency injection for every handler
 func NewHandlerContainer(SQLMaster *gorm.DB, sQLSlave *gorm.DB, conf config.Config) HandlerContainer {
-	return HandlerContainer{}
+	return HandlerContainer{
+		Auth: auth.NewHandler(SQLMaster),
+	}
 }

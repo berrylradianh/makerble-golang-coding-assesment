@@ -9,7 +9,7 @@
 package repository
 
 import (
-	"github.com/berrylradianh/makerble-golang-coding-assesment/library/struct/model"
+	"github.com/berrylradianh/makerble-golang-coding-assesment/library/model"
 
 	"gorm.io/gorm"
 )
@@ -21,5 +21,4 @@ type UserDoctorRepository interface {
 	FindOneBy(criteria map[string]interface{}) (*model.UserDoctor, error)
 	FindBy(criteria map[string]interface{}, page, size int) ([]*model.UserDoctor, error)
 	Count(criteria map[string]interface{}) int
-	CreateIndex(model *model.UserDoctor) error
 }

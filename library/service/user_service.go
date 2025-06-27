@@ -9,23 +9,19 @@
 package service
 
 import (
-	"context"
-	"strconv"
 	"github.com/berrylradianh/makerble-golang-coding-assesment/library/helper"
 	"github.com/berrylradianh/makerble-golang-coding-assesment/library/repository"
-	"github.com/berrylradianh/makerble-golang-coding-assesment/library/struct/model"
+	"github.com/berrylradianh/makerble-golang-coding-assesment/library/model"
 
-	"github.com/olivere/elastic/v7"
 	"gorm.io/gorm"
 )
 
 type userService struct {
 	db     *gorm.DB
-	client *elastic.Client
 }
 
-func NewUserService(db *gorm.DB, client *elastic.Client) repository.UserRepository {
-	return &userService{db, client}
+func NewUserService(db *gorm.DB) repository.UserRepository {
+	return &userService{db}
 }
 
 func (srv *userService) FindOneBy(criteria map[string]interface{}) (*model.User, error) {
@@ -74,63 +70,5 @@ func (srv *userService) Update(model *model.User, tx *gorm.DB) error {
 
 func (srv *userService) Delete(model *model.User, tx *gorm.DB) error {
 	err := tx.Delete(&model).Error
-	return err
-}
-
-func (srv *userService) CreateIndex(model *model.User) error {
-	exists, err := srv.client.IndexExists(model.TableName()).Do(context.Background())
-	if err != nil {
-		return err
-	}
-
-	if !exists {
-		_, err := srv.client.CreateIndex(model.TableName()).Do(context.Background())
-		if err != nil {
-			return err
-		}
-	}
-
-	_, err = srv.client.Index().
-		Index(model.TableName()).
-		Id(strconv.Itoa(model.ID)).
-		BodyJson(&model).
-		Do(context.Background())
-	return err
-}
-
-func (srv *userService) CreateOrUpdateIndex(model *model.User) error {
-	ctx := context.Background()
-	// try to find index
-	exists, err := srv.client.IndexExists(model.TableName()).Do(ctx)
-	if err != nil {
-		return err
-	}
-
-	// index not exist so create first
-	if !exists {
-		_, err = srv.client.CreateIndex(model.TableName()).Do(ctx)
-		if err != nil {
-			return err
-		}
-	}
-
-	// try to delete old entry
-	_, err = srv.client.Delete().
-		Index(model.TableName()).
-		Id(strconv.Itoa(model.ID)).
-		Refresh("true").
-		Do(ctx)
-
-	// if error is not null and is not data not found
-	if err != nil && !elastic.IsNotFound(err) {
-		return err
-	}
-
-	// create entry
-	_, err = srv.client.Index().
-		Index(model.TableName()).
-		Id(strconv.Itoa(model.ID)).
-		BodyJson(&model).
-		Do(context.Background())
 	return err
 }

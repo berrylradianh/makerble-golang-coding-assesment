@@ -66,7 +66,7 @@ CREATE TABLE public.user_doctors
     sub_specialization character varying(255),
     last_education character varying(255) NOT NULL,
     year_graduated character varying(10) NOT NULL,
-    professional_certification character varying(10)[],
+    professional_certification character varying(255)[],
     employee_number character varying(255) NOT NULL,
     is_active boolean NOT NULL DEFAULT false,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,

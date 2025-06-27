@@ -28,10 +28,10 @@ var signingKey []byte
 var myrole map[string][]string
 
 type TokenStructure struct {
-	UserID   int
-	Role     string
-	WaNumber string
-	Email    string
+	UserID int
+	Role   string
+	Phone  string
+	Email  string
 }
 
 type TokenResponse struct {
@@ -180,7 +180,7 @@ func (cAuth *clinicPortalAuth) GenerateToken(data TokenStructure) (response *Tok
 	}
 
 	claims["user_id"] = data.UserID
-	claims["wa_number"] = data.WaNumber
+	claims["phone"] = data.Phone
 	claims["email"] = data.Email
 	claims["role"] = data.Role
 	claims["hash"] = string(myCrypt)

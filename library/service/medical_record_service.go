@@ -5,27 +5,22 @@
  * Created by Berryl Radian Hamesha <berrylhamesha@gmail.com> on June 25, 2025
  */
 
-
 package service
 
 import (
-	"context"
-	"strconv"
 	"github.com/berrylradianh/makerble-golang-coding-assesment/library/helper"
+	"github.com/berrylradianh/makerble-golang-coding-assesment/library/model"
 	"github.com/berrylradianh/makerble-golang-coding-assesment/library/repository"
-	"github.com/berrylradianh/makerble-golang-coding-assesment/library/struct/model"
 
-	"github.com/olivere/elastic/v7"
 	"gorm.io/gorm"
 )
 
 type medicalRecordService struct {
-	db     *gorm.DB
-	client *elastic.Client
+	db *gorm.DB
 }
 
-func NewMedicalRecordService(db *gorm.DB, client *elastic.Client) repository.MedicalRecordRepository {
-	return &medicalRecordService{db, client}
+func NewMedicalRecordService(db *gorm.DB) repository.MedicalRecordRepository {
+	return &medicalRecordService{db}
 }
 
 func (srv *medicalRecordService) FindOneBy(criteria map[string]interface{}) (*model.MedicalRecord, error) {
@@ -59,7 +54,7 @@ func (srv *medicalRecordService) Count(criteria map[string]interface{}) int {
 }
 
 func (srv *medicalRecordService) Create(model *model.MedicalRecord, tx *gorm.DB) (*model.MedicalRecord, error) {
-		db := tx.Create(&model)
+	db := tx.Create(&model)
 	if err := db.Error; err != nil {
 		return nil, err
 	}
@@ -74,63 +69,5 @@ func (srv *medicalRecordService) Update(model *model.MedicalRecord, tx *gorm.DB)
 
 func (srv *medicalRecordService) Delete(model *model.MedicalRecord, tx *gorm.DB) error {
 	err := tx.Delete(&model).Error
-	return err
-}
-
-func (srv *medicalRecordService) CreateIndex(model *model.MedicalRecord) error {
-	exists, err := srv.client.IndexExists(model.TableName()).Do(context.Background())
-	if err != nil {
-		return err
-	}
-
-	if !exists {
-		_, err := srv.client.CreateIndex(model.TableName()).Do(context.Background())
-		if err != nil {
-			return err
-		}
-	}
-
-	_, err = srv.client.Index().
-		Index(model.TableName()).
-		Id(strconv.Itoa(model.ID)).
-		BodyJson(&model).
-		Do(context.Background())
-	return err
-}
-
-func (srv *medicalRecordService) CreateOrUpdateIndex(model *model.MedicalRecord) error {
-	ctx := context.Background()
-	// try to find index
-	exists, err := srv.client.IndexExists(model.TableName()).Do(ctx)
-	if err != nil {
-		return err
-	}
-
-	// index not exist so create first
-	if !exists {
-		_, err = srv.client.CreateIndex(model.TableName()).Do(ctx)
-		if err != nil {
-			return err
-		}
-	}
-
-	// try to delete old entry
-	_, err = srv.client.Delete().
-		Index(model.TableName()).
-		Id(strconv.Itoa(model.ID)).
-		Refresh("true").
-		Do(ctx)
-
-	// if error is not null and is not data not found
-	if err != nil && !elastic.IsNotFound(err) {
-		return err
-	}
-
-	// create entry
-	_, err = srv.client.Index().
-		Index(model.TableName()).
-		Id(strconv.Itoa(model.ID)).
-		BodyJson(&model).
-		Do(context.Background())
 	return err
 }

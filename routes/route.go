@@ -5,12 +5,6 @@
  * Created by Berryl Radian Hamesha <berrylhamesha@gmail.com> on June 25, 2025
  */
 
-/*
- * Created on Thu Jan 16 2025
- *
- * Copyright (c) 2025 Berryl Radian Hamesha
- */
-
 package routes
 
 import (
@@ -22,7 +16,7 @@ import (
 )
 
 func NewRouteInit(req request.RouteInit) {
-	_ = container.NewHandlerContainer(req.SQLMaster, req.SQLSlave, req.Env)
+	moduleDI := container.NewHandlerContainer(req.SQLMaster, req.SQLSlave, req.Env)
 
 	route := req.Engine.Group("api/v1")
 	route.Use(apmgin.Middleware(req.Engine))
@@ -32,4 +26,8 @@ func NewRouteInit(req request.RouteInit) {
 
 	route.OPTIONS("/*path", cors.CORSMiddleware())
 
+	{
+		authRoute := route.Group("auth")
+		authRoute.POST("login", moduleDI.Auth.Login)
+	}
 }
