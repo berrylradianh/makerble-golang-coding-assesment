@@ -17,6 +17,7 @@ import (
 
 type Usecase interface {
 	Login(req request.LoginRequest) (*auth.TokenResponse, error)
+	Logout(req request.LogoutRequest) error
 }
 
 type usecase struct {

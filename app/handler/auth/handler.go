@@ -19,6 +19,7 @@ type handler struct {
 
 type Handler interface {
 	Login(ctx *gin.Context)
+	Logout(ctx *gin.Context)
 }
 
 func NewHandler(

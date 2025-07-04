@@ -14,4 +14,5 @@ var (
 	ErrDuplicateEmail         = errors.New("your email is already registered")
 	ErrInvalidEmailOrPassword = errors.New("invalid email or password")
 	ErrEmailNotFound          = errors.New("email not found")
+	ErrTokenExpired           = errors.New("Your token has expired, please login again")
 )

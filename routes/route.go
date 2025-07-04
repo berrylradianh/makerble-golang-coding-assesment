@@ -29,5 +29,6 @@ func NewRouteInit(req request.RouteInit) {
 	{
 		authRoute := route.Group("auth")
 		authRoute.POST("login", moduleDI.Auth.Login)
+		authRoute.POST("logout", moduleDI.Auth.Logout)
 	}
 }

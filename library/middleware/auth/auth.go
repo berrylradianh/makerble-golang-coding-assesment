@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	jwtmiddleware "github.com/auth0/go-jwt-middleware"
@@ -26,6 +27,11 @@ import (
 var jwtMiddleware *jwtmiddleware.JWTMiddleware
 var signingKey []byte
 var myrole map[string][]string
+
+var (
+	blacklist      = make(map[string]time.Time)
+	blacklistMutex sync.RWMutex
+)
 
 type TokenStructure struct {
 	UserID int
@@ -57,6 +63,41 @@ const (
 	EXPIRED_IN = time.Hour * (24 * 90) // 90 days
 )
 
+func GetSigningKey() []byte {
+	return signingKey
+}
+
+func AddToBlacklist(token string, expiry time.Time) {
+	blacklistMutex.Lock()
+	defer blacklistMutex.Unlock()
+	blacklist[token] = expiry
+}
+
+func IsTokenBlacklisted(token string) bool {
+	blacklistMutex.RLock()
+	defer blacklistMutex.RUnlock()
+
+	if expiry, exists := blacklist[token]; exists {
+		if time.Now().Before(expiry) {
+			return true
+		}
+		blacklistMutex.Lock()
+		defer blacklistMutex.Unlock()
+		delete(blacklist, token)
+	}
+	return false
+}
+
+func CleanBlacklist() {
+	blacklistMutex.Lock()
+	defer blacklistMutex.Unlock()
+	for token, expiry := range blacklist {
+		if time.Now().After(expiry) {
+			delete(blacklist, token)
+		}
+	}
+}
+
 func NewMiddlewareConfig(conf config.Config) error {
 
 	admin := strings.Split(conf.GetString("permission.admin"), ",")
@@ -72,6 +113,13 @@ func NewMiddlewareConfig(conf config.Config) error {
 
 	InitRole(role)
 	InitJWTMiddlewareCustom([]byte(signature), jwt.SigningMethodHS512)
+
+	go func() {
+		for {
+			time.Sleep(time.Hour)
+			CleanBlacklist()
+		}
+	}()
 
 	return nil
 }
@@ -123,6 +171,10 @@ func checkJWTToken(r *http.Request) error {
 		}
 		eReqiredToken := errors.New("required authorization token not found")
 		return eReqiredToken
+	}
+
+	if IsTokenBlacklisted(token) {
+		return errors.New("token has been blacklisted")
 	}
 
 	parsedToken, err := jwt.Parse(token, jwtMiddleware.Options.ValidationKeyGetter)
@@ -178,7 +230,7 @@ func (cAuth *clinicPortalAuth) GenerateToken(data TokenStructure) (response *Tok
 	claims["email"] = data.Email
 	claims["role"] = data.Role
 	claims["hash"] = string(myCrypt)
-	claims["exp"] = expiredIn
+	claims["exp"] = expiredAt.Unix()
 
 	tokenString, err := token.SignedString(cAuth.signature)
 	if err != nil {

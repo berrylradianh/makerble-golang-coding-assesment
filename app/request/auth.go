@@ -25,3 +25,7 @@ type RegisterRequest struct {
 	Password             string    `json:"password" form:"password" validate:"required,min=8"`
 	ConfirmationPassword string    `json:"confirmation_password" form:"confirmation_password" validate:"required,eqfield=Password"`
 }
+
+type LogoutRequest struct {
+	Token string `json:"token" form:"token" validate:"required"`
+}
