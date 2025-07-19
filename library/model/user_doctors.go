@@ -8,11 +8,11 @@ const TableNameUserDoctor = "user_doctors"
 
 // UserDoctor mapped from table <user_doctors>
 type UserDoctor struct {
-	ID                        int     `gorm:"column:id;primaryKey" json:"id"`
+	ID                        int       `gorm:"column:id;primaryKey" json:"id"`
 	Code                      string    `gorm:"column:code;not null;default:gen_random_uuid()" json:"code"`
-	UserID                    int     `gorm:"column:user_id;not null" json:"user_id"`
-	EmploymentStatusID        int     `gorm:"column:employment_status_id;not null" json:"employment_status_id"`
-	DepartmentID              int     `gorm:"column:department_id;not null" json:"department_id"`
+	UserID                    int       `gorm:"column:user_id;not null" json:"user_id"`
+	EmploymentStatusID        int       `gorm:"column:employment_status_id;not null" json:"employment_status_id"`
+	DepartmentID              int       `gorm:"column:department_id;not null" json:"department_id"`
 	ProfessionalDegree        string    `gorm:"column:professional_degree;not null" json:"professional_degree"`
 	Citizenship               string    `gorm:"column:citizenship;not null" json:"citizenship"`
 	Language                  string    `gorm:"column:language;not null" json:"language"`

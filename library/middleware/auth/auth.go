@@ -176,7 +176,7 @@ func checkJWTToken(r *http.Request) error {
 	}
 
 	if IsTokenBlacklisted(token) {
-		return errors.New("token has been blacklisted")
+		return errors.New("token has been expired")
 	}
 
 	parsedToken, err := jwt.Parse(token, jwtMiddleware.Options.ValidationKeyGetter)

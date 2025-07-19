@@ -5,19 +5,18 @@
  * Created by Berryl Radian Hamesha <berrylhamesha@gmail.com> on June 25, 2025
  */
 
-
 package service
 
 import (
 	"github.com/berrylradianh/makerble-golang-coding-assesment/library/helper"
-	"github.com/berrylradianh/makerble-golang-coding-assesment/library/repository"
 	"github.com/berrylradianh/makerble-golang-coding-assesment/library/model"
+	"github.com/berrylradianh/makerble-golang-coding-assesment/library/repository"
 
 	"gorm.io/gorm"
 )
 
 type userService struct {
-	db     *gorm.DB
+	db *gorm.DB
 }
 
 func NewUserService(db *gorm.DB) repository.UserRepository {
@@ -55,7 +54,7 @@ func (srv *userService) Count(criteria map[string]interface{}) int {
 }
 
 func (srv *userService) Create(model *model.User, tx *gorm.DB) (*model.User, error) {
-		db := tx.Create(&model)
+	db := tx.Create(&model)
 	if err := db.Error; err != nil {
 		return nil, err
 	}

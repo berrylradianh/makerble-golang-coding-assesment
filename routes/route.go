@@ -10,6 +10,7 @@ package routes
 import (
 	"github.com/berrylradianh/makerble-golang-coding-assesment/container"
 	request "github.com/berrylradianh/makerble-golang-coding-assesment/library"
+	"github.com/berrylradianh/makerble-golang-coding-assesment/library/middleware/auth"
 	"github.com/berrylradianh/makerble-golang-coding-assesment/library/middleware/cors"
 	"github.com/gin-gonic/gin"
 	"go.elastic.co/apm/module/apmgin"
@@ -30,5 +31,11 @@ func NewRouteInit(req request.RouteInit) {
 		authRoute := route.Group("auth")
 		authRoute.POST("login", moduleDI.Auth.Login)
 		authRoute.POST("logout", moduleDI.Auth.Logout)
+	}
+
+	{
+		userRoute := route.Group("user")
+		userRoute.Use(auth.MyAuth("receptionist"))
+		userRoute.POST("", moduleDI.User.Create)
 	}
 }

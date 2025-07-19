@@ -15,4 +15,14 @@ var (
 	ErrInvalidEmailOrPassword = errors.New("invalid email or password")
 	ErrEmailNotFound          = errors.New("email not found")
 	ErrTokenExpired           = errors.New("Your token has expired, please login again")
+	ErrForbidden              = errors.New("you don't have permission to access this feature")
+)
+
+const (
+	_ = iota
+	RoleAdminID
+	RoleReceptionistID
+	RoleDoctorID
+	RolePatientID
+	RoleSuperAdminID
 )
