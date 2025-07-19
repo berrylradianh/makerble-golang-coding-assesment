@@ -100,6 +100,7 @@ func CleanBlacklist() {
 
 func NewMiddlewareConfig(conf config.Config) error {
 
+	superadmin := strings.Split(conf.GetString("permission.superadmin"), ",")
 	admin := strings.Split(conf.GetString("permission.admin"), ",")
 	receptionist := strings.Split(conf.GetString("permission.receptionist"), ",")
 	doctor := strings.Split(conf.GetString("permission.doctor"), ",")
@@ -107,6 +108,7 @@ func NewMiddlewareConfig(conf config.Config) error {
 	signature := conf.GetString("app.signature")
 
 	role := make(map[string][]string)
+	role["superadmin"] = superadmin
 	role["admin"] = admin
 	role["receptionist"] = receptionist
 	role["doctor"] = doctor
